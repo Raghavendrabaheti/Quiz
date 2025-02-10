@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="quiz.css">
+    <title>DSA Quiz</title>
+</head>
+<body>
+    <div class="container1">
+        <h2>DSA Quiz</h2>
+
+        <!-- Score Display (at the top-left) -->
+        <div class="score">
+            <span id="right-answer">Score: 0</span>
+        </div>
+
+        <div class="container">
+            <!-- Initial "Start" Button -->
+            <div id="start-container" class="start-container">
+                <button id="start-btn" class="start-btn btn">Start</button>
+            </div>
+
+            <!-- Difficulty Selection -->
+            <div id="difficulty-container" class="hide">
+                <h3>Select Difficulty</h3>
+                <div class="btn-grid">
+                    <button class="btn" id="easy-btn">Easy</button>
+                    <button class="btn" id="medium-btn">Medium</button>
+                    <button class="btn" id="hard-btn">Hard</button>
+                </div>
+            </div>
+
+            <!-- Question and Answer Options -->
+            <div id="question-container" class="hide">
+                <div id="question" class="question"></div>
+                <div id="answer-btn" class="btn-grid"></div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <button id="next-btn" class="next-btn btn hide">Next</button>
+            </div>
+
+            <!-- Final Score Display -->
+            <div id="final-score-container" class="hide">
+                <div id="final-score" class="final-score">
+                    <h2>Quiz Over!</h2>
+                    <p>Your final score: <span id="final-score-text">0</span></p>
+                    <button id="restart-btn" class="btn">Restart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="quiz.js"></script>
+</body>
+</html>
