@@ -5,7 +5,7 @@ A simple **interactive quiz** built with **HTML, CSS, and JavaScript**. 🎯
 It supports **multiple difficulty levels**, shows **real-time scores**, and provides **instant feedback** on answers.  
 
 ## 📸 Preview
-![Quiz App Screenshot]()  
+![Quiz App Screenshot](screenshot.png)  
 
 ---
 
