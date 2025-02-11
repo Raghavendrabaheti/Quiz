@@ -25,4 +25,13 @@ It supports **multiple difficulty levels**, shows **real-time scores**, and prov
 
 ---
 
-## 📂 Project Structure
+---
+
+### **3️⃣ Save & Upload**
+- Save the file.
+- If using GitHub, **push it** to your repository:
+  ```sh
+  git add README.md
+  git commit -m "Added README"
+  git push origin main
+
