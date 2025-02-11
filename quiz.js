@@ -1,215 +1,575 @@
-const startButton = document.getElementById('start-btn');
-const nextButton = document.getElementById('next-btn');
-const questionContainerElement = document.getElementById('question-container');
-const questionElement = document.getElementById('question');
-const answerButtonElement = document.getElementById('answer-btn');
-let shuffledQuestions, currentQuestionIndex;
-let quizScore = 0;
-
-startButton.addEventListener('click', startGame);
-nextButton.addEventListener('click', () => {
-    currentQuestionIndex++;
-    setNextQuestion();
-});
-
-function startGame() {
-    startButton.classList.add('hide');
-    shuffledQuestions = questions.sort(() => Math.random() - 0.5);
-    currentQuestionIndex = 0;
-    questionContainerElement.classList.remove('hide');
-    setNextQuestion();
-    quizScore = 0;
-}
-
-function setNextQuestion() {
-    resetState();
-    showQuestion(shuffledQuestions[currentQuestionIndex]);
-}
-
-function showQuestion(question) {
-    questionElement.innerText = question.question;
-    question.answers.forEach(answer => {
-        const button = document.createElement('button');
-        button.innerText = answer.text;
-        button.classList.add('btn');
-        if (answer.correct) {
-            button.dataset.correct = answer.correct;
-        }
-        button.addEventListener('click', selectAnswer);
-        answerButtonElement.appendChild(button);
-    });
-}
-
-function resetState() {
-    clearStatusClass(document.body);
-    nextButton.classList.add('hide');
-    while (answerButtonElement.firstChild) {
-        answerButtonElement.removeChild(answerButtonElement.firstChild);
-    }
-}
-
-function selectAnswer(e) {
-    const selectedButton = e.target;
-    const correct = selectedButton.dataset.correct === 'true';
-    setStatusClass(document.body, correct);
-    Array.from(answerButtonElement.children).forEach(button => {
-        setStatusClass(button, button.dataset.correct === 'true');
-    });
-
-    if (shuffledQuestions.length > currentQuestionIndex + 1) {
-        nextButton.classList.remove('hide');
-    } else {
-        startButton.innerText = 'Restart';
-        startButton.classList.remove('hide');
-    }
-
-    if (correct) {
-        quizScore++;
-    }
-    document.getElementById('right-answer').innerText = quizScore;
-}
-
-function setStatusClass(element, correct) {
-    clearStatusClass(element);
-    if (correct) {
-        element.classList.add('correct');
-    } else {
-        element.classList.add('wrong');
-    }
-}
-
-function clearStatusClass(element) {
-    element.classList.remove('correct');
-    element.classList.remove('wrong');
-}
-
-const questions = [
+const questionsByDifficulty = {
+    easy: [
+        
+            
     {
-        question: 'What is the time complexity of accessing an element in an array?',
+        question: 'What is the time complexity of inserting an element at the end of a dynamic array?',
         answers: [
             { text: 'O(1)', correct: true },
             { text: 'O(n)', correct: false },
             { text: 'O(log n)', correct: false },
-            { text: 'O(n^2)', correct: false },
+            { text: 'O(n²)', correct: false }
         ],
     },
     {
-        question: 'What data structure would you use to implement a LIFO order?',
+        question: 'Which of the following data structures is used to implement recursion?',
         answers: [
             { text: 'Queue', correct: false },
-            { text: 'Linked List', correct: false },
             { text: 'Stack', correct: true },
-            { text: 'Binary Tree', correct: false },
+            { text: 'Linked List', correct: false },
+            { text: 'Array', correct: false }
         ],
     },
     {
-        question: 'Which of the following sorting algorithms has the best average-case time complexity?',
+        question: 'Which of the following is not a stable sorting algorithm?',
         answers: [
+            { text: 'Merge Sort', correct: false },
+            { text: 'Quick Sort', correct: true },
             { text: 'Bubble Sort', correct: false },
-            { text: 'Selection Sort', correct: false },
-            { text: 'Insertion Sort', correct: false },
-            { text: 'Merge Sort', correct: true },
+            { text: 'Insertion Sort', correct: false }
         ],
     },
     {
-        question: 'What is the time complexity of binary search?',
+        question: 'What is the time complexity of binary search on a sorted array?',
+        answers: [
+            { text: 'O(n)', correct: false },
+            { text: 'O(log n)', correct: true },
+            { text: 'O(n log n)', correct: false },
+            { text: 'O(1)', correct: false }
+        ],
+    },
+    {
+        question: 'What is the space complexity of merge sort?',
+        answers: [
+            { text: 'O(1)', correct: false },
+            { text: 'O(n)', correct: true },
+            { text: 'O(n log n)', correct: false },
+            { text: 'O(log n)', correct: false }
+        ],
+    },
+    {
+        question: 'What is the worst-case time complexity of Quick Sort?',
+        answers: [
+            { text: 'O(n)', correct: false },
+            { text: 'O(n log n)', correct: false },
+            { text: 'O(n²)', correct: true },
+            { text: 'O(log n)', correct: false }
+        ],
+    },
+    {
+        question: 'Which of the following is not a characteristic of a queue?',
+        answers: [
+            { text: 'FIFO (First In, First Out)', correct: false },
+            { text: 'LIFO (Last In, First Out)', correct: true },
+            { text: 'Elements are inserted at the rear', correct: false },
+            { text: 'Elements are removed from the front', correct: false }
+        ],
+    },
+    {
+        question: 'Which of the following data structures does not allow random access?',
+        answers: [
+            { text: 'Array', correct: false },
+            { text: 'Linked List', correct: true },
+            { text: 'Stack', correct: false },
+            { text: 'Queue', correct: false }
+        ],
+    },
+    {
+        question: 'What is the time complexity of finding an element in a hash table?',
+        answers: [
+            { text: 'O(n)', correct: false },
+            { text: 'O(log n)', correct: false },
+            { text: 'O(1)', correct: true },
+            { text: 'O(n log n)', correct: false }
+        ],
+    },
+    {
+        question: 'Which of the following algorithms is used for finding the shortest path in a graph?',
+        answers: [
+            { text: 'Dijkstra’s Algorithm', correct: true },
+            { text: 'Depth First Search', correct: false },
+            { text: 'Breadth First Search', correct: false },
+            { text: 'Kruskal’s Algorithm', correct: false }
+        ],
+    },
+    {
+        question: 'Which of the following sorting algorithms has the best time complexity in the worst case?',
+        answers: [
+            { text: 'Quick Sort', correct: false },
+            { text: 'Merge Sort', correct: true },
+            { text: 'Bubble Sort', correct: false },
+            { text: 'Insertion Sort', correct: false }
+        ],
+    },
+    {
+        question: 'What is the time complexity of searching an element in a binary search tree?',
+        answers: [
+            { text: 'O(n)', correct: false },
+            { text: 'O(log n)', correct: true },
+            { text: 'O(n²)', correct: false },
+            { text: 'O(n log n)', correct: false }
+        ],
+    },
+    {
+        question: 'Which data structure is used to implement a breadth-first search (BFS)?',
+        answers: [
+            { text: 'Stack', correct: false },
+            { text: 'Queue', correct: true },
+            { text: 'Array', correct: false },
+            { text: 'Linked List', correct: false }
+        ],
+    },
+    {
+        question: 'Which of the following is not a type of tree?',
+        answers: [
+            { text: 'Binary Tree', correct: false },
+            { text: 'AVL Tree', correct: false },
+            { text: 'B Tree', correct: false },
+            { text: 'Stack Tree', correct: true }
+        ],
+    },
+    {
+        question: 'Which algorithm is best for finding the minimum spanning tree of a graph?',
+        answers: [
+            { text: 'Dijkstra’s Algorithm', correct: false },
+            { text: 'Prim’s Algorithm', correct: true },
+            { text: 'Bellman-Ford Algorithm', correct: false },
+            { text: 'Floyd-Warshall Algorithm', correct: false }
+        ],
+    },
+    {
+        question: 'In which of the following scenarios would you use a heap?',
+        answers: [
+            { text: 'Priority Queue', correct: true },
+            { text: 'Linked List Traversal', correct: false },
+            { text: 'Tree Traversal', correct: false },
+            { text: 'Breadth-First Search', correct: false }
+        ],
+    },
+    {
+        question: 'What is the space complexity of an array?',
+        answers: [
+            { text: 'O(1)', correct: false },
+            { text: 'O(n)', correct: true },
+            { text: 'O(n log n)', correct: false },
+            { text: 'O(log n)', correct: false }
+        ],
+    },
+    {
+        question: 'What is the best data structure to implement an undo operation?',
+        answers: [
+            { text: 'Queue', correct: false },
+            { text: 'Stack', correct: true },
+            { text: 'Array', correct: false },
+            { text: 'Linked List', correct: false }
+        ],
+    },
+    {
+        question: 'Which of the following sorting algorithms is the most efficient in terms of time complexity for large datasets?',
+        answers: [
+            { text: 'Merge Sort', correct: false },
+            { text: 'Quick Sort', correct: true },
+            { text: 'Bubble Sort', correct: false },
+            { text: 'Heap Sort', correct: false }
+        ],
+    },
+    {
+        question: 'What is the space complexity of the recursive version of Quick Sort?',
         answers: [
             { text: 'O(1)', correct: false },
             { text: 'O(log n)', correct: true },
             { text: 'O(n)', correct: false },
-            { text: 'O(n^2)', correct: false },
+            { text: 'O(n log n)', correct: false }
         ],
-    },
-    {
-        question: 'What is a binary search tree (BST)?',
-        answers: [
-            { text: 'Graph', correct: false },
-            { text: 'Linked List', correct: false },
-            { text: 'Heap', correct: false },
-            { text: 'Tree', correct: true },
-        ],
-    },
-    {
-        question: 'How do you detect a cycle in a linked list?',
-        answers: [
-            { text: 'Two Pointers', correct: true },
-            { text: 'Queue', correct: false },
-            { text: 'Stack', correct: false },
-            { text: 'Hash Table', correct: false },
-        ],
-    },
-    {
-        question: 'Which technique involves breaking down a problem into simpler subproblems?',
-        answers: [
-            { text: 'Recursion', correct: false },
-            { text: 'Iteration', correct: false },
-            { text: 'Dynamic Programming', correct: true },
-            { text: 'Greedy Algorithm', correct: false },
-        ],
-    },
-    {
-        question: 'What method calls itself to solve a problem?',
-        answers: [
-            { text: 'Iteration', correct: false },
-            { text: 'Recursion', correct: true },
-            { text: 'Looping', correct: false },
-            { text: 'Dynamic Programming', correct: false },
-        ],
-    },
-    {
-        question: 'What data structure uses a hash function to map keys to values?',
-        answers: [
-            { text: 'Stack', correct: false },
-            { text: 'Array', correct: false },
-            { text: 'Queue', correct: false },
-            { text: 'Hash Table', correct: true },
-        ],
-    },
-    {
-        question: 'Which data structure is used to process elements based on priority?',
-        answers: [
-            { text: 'Queue', correct: false },
-            { text: 'Priority Queue', correct: true },
-            { text: 'Linked List', correct: false },
-            { text: 'Stack', correct: false },
-        ],
-    },
-];
 
-function checkAnswer(selected, correct) {
-    if (selected === correct) {
-        score++;
-        rightAnswerElement.textContent = `Score: ${score}`;
-        document.body.classList.add('correct');
-    } else {
-        document.body.classList.add('wrong');
+        },
+        {
+            question: 'What data structure uses a FIFO (First In First Out) order?',
+            answers: [
+                { text: 'Stack', correct: false },
+                { text: 'Queue', correct: true },
+                { text: 'Tree', correct: false },
+                { text: 'Graph', correct: false },
+            ],
+        }
+    ],
+    medium: [
+        {
+            question: 'What is the time complexity of inserting an element into a linked list?',
+            answers: [
+                { text: 'O(1)', correct: true },
+                { text: 'O(n)', correct: false },
+                { text: 'O(log n)', correct: false },
+                { text: 'O(n log n)', correct: false }
+            ],
+        },
+        {
+            question: 'Which data structure is best for implementing a priority queue?',
+            answers: [
+                { text: 'Array', correct: false },
+                { text: 'Heap', correct: true },
+                { text: 'Linked List', correct: false },
+                { text: 'Queue', correct: false }
+            ],
+        },
+        {
+            question: 'In a binary tree, how many edges are there in a tree with n nodes?',
+            answers: [
+                { text: 'n', correct: false },
+                { text: 'n-1', correct: true },
+                { text: 'n+1', correct: false },
+                { text: '2n', correct: false }
+            ],
+        },
+        {
+            question: 'What is the time complexity of bubble sort?',
+            answers: [
+                { text: 'O(n)', correct: false },
+                { text: 'O(n log n)', correct: false },
+                { text: 'O(n²)', correct: true },
+                { text: 'O(log n)', correct: false }
+            ],
+        },
+        {
+            question: 'Which of the following is an advantage of a doubly linked list over a singly linked list?',
+            answers: [
+                { text: 'It requires less memory.', correct: false },
+                { text: 'It allows traversal in both directions.', correct: true },
+                { text: 'It is faster to insert elements.', correct: false },
+                { text: 'It is easier to implement.', correct: false }
+            ],
+        },
+        {
+            question: 'What is the space complexity of Quick Sort?',
+            answers: [
+                { text: 'O(1)', correct: false },
+                { text: 'O(n)', correct: false },
+                { text: 'O(log n)', correct: true },
+                { text: 'O(n log n)', correct: false }
+            ],
+        },
+        {
+            question: 'What is the worst-case time complexity of insertion sort?',
+            answers: [
+                { text: 'O(n)', correct: false },
+                { text: 'O(n log n)', correct: false },
+                { text: 'O(n²)', correct: true },
+                { text: 'O(log n)', correct: false }
+            ],
+        },
+        {
+            question: 'In a binary tree, what is the maximum number of nodes at level l?',
+            answers: [
+                { text: 'l', correct: false },
+                { text: '2^l', correct: true },
+                { text: '2^l - 1', correct: false },
+                { text: 'l²', correct: false }
+            ],
+        },
+        {
+            question: 'What is the time complexity of deleting an element from a singly linked list?',
+            answers: [
+                { text: 'O(1)', correct: false },
+                { text: 'O(n)', correct: true },
+                { text: 'O(log n)', correct: false },
+                { text: 'O(n log n)', correct: false }
+            ],
+        },
+        {
+            question: 'Which of the following is not a type of graph traversal?',
+            answers: [
+                { text: 'Breadth-First Search (BFS)', correct: false },
+                { text: 'Depth-First Search (DFS)', correct: false },
+                { text: 'Level-First Search (LFS)', correct: true },
+                { text: 'Depth-First Search (DFS)', correct: false }
+            ],
+        },
+        {
+            question: 'What is the time complexity of heap sort?',
+            answers: [
+                { text: 'O(n)', correct: false },
+                { text: 'O(n log n)', correct: true },
+                { text: 'O(n²)', correct: false },
+                { text: 'O(log n)', correct: false }
+            ],
+        },
+        {
+            question: 'In a balanced binary search tree, what is the time complexity of searching for an element?',
+            answers: [
+                { text: 'O(n)', correct: false },
+                { text: 'O(log n)', correct: true },
+                { text: 'O(n log n)', correct: false },
+                { text: 'O(n²)', correct: false }
+            ],
+        },
+        {
+            question: 'What is the space complexity of a hash table?',
+            answers: [
+                { text: 'O(1)', correct: false },
+                { text: 'O(n)', correct: true },
+                { text: 'O(log n)', correct: false },
+                { text: 'O(n²)', correct: false }
+            ],
+        },
+        {
+            question: 'Which data structure is used to implement a depth-first search (DFS)?',
+            answers: [
+                { text: 'Stack', correct: true },
+                { text: 'Queue', correct: false },
+                { text: 'Linked List', correct: false },
+                { text: 'Array', correct: false }
+            ],
+        },
+        {
+            question: 'Which of the following algorithms is most suitable for searching a sorted array?',
+            answers: [
+                { text: 'Linear Search', correct: false },
+                { text: 'Binary Search', correct: true },
+                { text: 'Jump Search', correct: false },
+                { text: 'Exponential Search', correct: false }
+            ],
+        },
+    ],
+    hard: [
+        {
+            question: 'What is the time complexity of finding the lowest common ancestor (LCA) in a binary search tree (BST)?',
+            answers: [
+                { text: 'O(n)', correct: false },
+                { text: 'O(log n)', correct: true },
+                { text: 'O(n log n)', correct: false },
+                { text: 'O(n²)', correct: false }
+            ],
+        },
+        {
+            question: 'What is the time complexity of performing a breadth-first search (BFS) on a graph with V vertices and E edges?',
+            answers: [
+                { text: 'O(V + E)', correct: true },
+                { text: 'O(V²)', correct: false },
+                { text: 'O(E)', correct: false },
+                { text: 'O(V log V)', correct: false }
+            ],
+        },
+        {
+            question: 'Which of the following is the most efficient algorithm for finding the shortest path in a weighted graph with non-negative edge weights?',
+            answers: [
+                { text: 'Dijkstra’s Algorithm', correct: true },
+                { text: 'Bellman-Ford Algorithm', correct: false },
+                { text: 'Floyd-Warshall Algorithm', correct: false },
+                { text: 'Kruskal’s Algorithm', correct: false }
+            ],
+        },
+        {
+            question: 'What is the time complexity of matrix multiplication for two n × n matrices using the Strassen algorithm?',
+            answers: [
+                { text: 'O(n³)', correct: false },
+                { text: 'O(n²)', correct: false },
+                { text: 'O(n^log2(7))', correct: true },
+                { text: 'O(n² log n)', correct: false }
+            ],
+        },
+        {
+            question: 'In a balanced AVL tree, what is the time complexity for inserting a node?',
+            answers: [
+                { text: 'O(log n)', correct: true },
+                { text: 'O(n)', correct: false },
+                { text: 'O(n log n)', correct: false },
+                { text: 'O(log n²)', correct: false }
+            ],
+        },
+        {
+            question: 'What is the time complexity of finding a strongly connected component in a directed graph using Kosaraju’s Algorithm?',
+            answers: [
+                { text: 'O(V + E)', correct: true },
+                { text: 'O(V²)', correct: false },
+                { text: 'O(E)', correct: false },
+                { text: 'O(log V)', correct: false }
+            ],
+        },
+        {
+            question: 'What is the space complexity of the recursive implementation of depth-first search (DFS) on a graph?',
+            answers: [
+                { text: 'O(V)', correct: true },
+                { text: 'O(E)', correct: false },
+                { text: 'O(V + E)', correct: false },
+                { text: 'O(log V)', correct: false }
+            ],
+        },
+        {
+            question: 'Which of the following is true about an NP-complete problem?',
+            answers: [
+                { text: 'It can be solved in polynomial time', correct: false },
+                { text: 'It is the hardest of NP problems', correct: true },
+                { text: 'It has a known polynomial-time solution', correct: false },
+                { text: 'It cannot be verified in polynomial time', correct: false }
+            ],
+        },
+        {
+            question: 'What is the space complexity of an adjacency matrix representation of a graph with V vertices and E edges?',
+            answers: [
+                { text: 'O(V + E)', correct: false },
+                { text: 'O(V²)', correct: true },
+                { text: 'O(V)', correct: false },
+                { text: 'O(E)', correct: false }
+            ],
+        },
+        {
+            question: 'What is the time complexity of the Bellman-Ford algorithm for finding the shortest path in a graph with V vertices and E edges?',
+            answers: [
+                { text: 'O(V + E)', correct: false },
+                { text: 'O(V²)', correct: false },
+                { text: 'O(VE)', correct: true },
+                { text: 'O(V log V)', correct: false }
+            ],
+        },
+        {
+            question: 'What is the time complexity of the Floyd-Warshall algorithm for finding shortest paths between all pairs of vertices in a graph?',
+            answers: [
+                { text: 'O(V²)', correct: false },
+                { text: 'O(V³)', correct: true },
+                { text: 'O(VE)', correct: false },
+                { text: 'O(E log V)', correct: false }
+            ],
+        },
+        {
+            question: 'What is the time complexity of finding the maximum flow in a flow network using the Ford-Fulkerson algorithm?',
+            answers: [
+                { text: 'O(E * V)', correct: false },
+                { text: 'O(V² * E)', correct: true },
+                { text: 'O(V * E)', correct: false },
+                { text: 'O(V³)', correct: false }
+            ],
+        },
+        {
+            question: 'Which of the following algorithms is used to find the longest common subsequence (LCS) between two strings?',
+            answers: [
+                { text: 'Dynamic Programming', correct: true },
+                { text: 'Greedy Algorithm', correct: false },
+                { text: 'Kruskal’s Algorithm', correct: false },
+                { text: 'Divide and Conquer', correct: false }
+            ],
+        },
+        {
+            question: 'What is the worst-case time complexity of quicksort with random pivot selection?',
+            answers: [
+                { text: 'O(n log n)', correct: false },
+                { text: 'O(n²)', correct: true },
+                { text: 'O(log n)', correct: false },
+                { text: 'O(n)', correct: false }
+            ],
+        },
+        {
+            question: 'What is the time complexity of the Knapsack problem using dynamic programming?',
+            answers: [
+                { text: 'O(nW)', correct: true },
+                { text: 'O(n²)', correct: false },
+                { text: 'O(W²)', correct: false },
+                { text: 'O(nW²)', correct: false }
+            ],
+        }
+    ]
+};
+
+const startButton = document.getElementById("start-btn");
+const difficultyContainer = document.getElementById("difficulty-container");
+const questionContainer = document.getElementById("question-container");
+const answerButtons = document.getElementById("answer-btn");
+const nextButton = document.getElementById("next-btn");
+const finalScoreContainer = document.getElementById("final-score-container");
+const finalScoreText = document.getElementById("final-score-text");
+const scoreDisplay = document.getElementById("right-answer");
+const restartButton = document.getElementById("restart-btn");
+
+// **New: Incorrect Message Element**
+const incorrectMessage = document.createElement("p");
+incorrectMessage.style.color = "red";
+incorrectMessage.style.fontSize = "1.2rem";
+incorrectMessage.style.marginTop = "10px";
+incorrectMessage.style.display = "none"; // Initially hidden
+questionContainer.appendChild(incorrectMessage);
+
+let shuffledQuestions, currentQuestionIndex, score = 0;
+
+// Event Listeners
+startButton.addEventListener("click", () => {
+    startButton.classList.add("hide");
+    difficultyContainer.classList.remove("hide");
+});
+
+document.getElementById("easy-btn").addEventListener("click", () => startGame("easy"));
+document.getElementById("medium-btn").addEventListener("click", () => startGame("medium"));
+document.getElementById("hard-btn").addEventListener("click", () => startGame("hard"));
+
+function startGame(difficulty) {
+    difficultyContainer.classList.add("hide");
+    questionContainer.classList.remove("hide");
+
+    let allQuestions = questionsByDifficulty[difficulty];
+
+    if (allQuestions.length < 10) {
+        console.error("Not enough questions available!");
+        return;
     }
-    nextButton.classList.remove('hide');
-}
 
-function nextQuestion() {
-    currentQuestionIndex++;
-    if (currentQuestionIndex < totalQuestions) {
-        loadQuestion('easy');  // Replace with dynamic difficulty
-        nextButton.classList.add('hide');
-        document.body.classList.remove('correct', 'wrong');
-    } else {
-        showFinalScore();
-    }
-}
-
-function showFinalScore() {
-    questionContainer.classList.add('hide');
-    nextButton.classList.add('hide');
-    finalScoreText.textContent = score;
-    finalScoreContainer.classList.remove('hide');
-}
-
-function restartQuiz() {
-    score = 0;
+    shuffledQuestions = allQuestions.sort(() => Math.random() - 0.5).slice(0, 10);
     currentQuestionIndex = 0;
-    rightAnswerElement.textContent = `Score: 0`;
-    finalScoreContainer.classList.add('hide');
-    difficultyContainer.classList.add('hide');
-    document.getElementById('start-container').classList.remove('hide');
+    score = 0;
+    scoreDisplay.innerText = `Score: ${score}`;
+    showQuestion(shuffledQuestions[currentQuestionIndex]);
 }
+
+function showQuestion(questionObj) {
+    document.getElementById("question").innerText = questionObj.question;
+    answerButtons.innerHTML = "";
+    incorrectMessage.style.display = "none"; // Hide incorrect message on new question
+
+    questionObj.answers.forEach(answer => {
+        const button = document.createElement("button");
+        button.innerText = answer.text;
+        button.classList.add("btn");
+        button.addEventListener("click", () => selectAnswer(button, answer.correct));
+        answerButtons.appendChild(button);
+    });
+}
+
+function selectAnswer(button, correct) {
+    if (correct) {
+        button.classList.add("correct");
+        score++;
+        scoreDisplay.innerText = `Score: ${score}`;
+    } else {
+        button.classList.add("wrong");
+
+        // **Show incorrect message**
+        incorrectMessage.innerText = "Your answer is incorrect!";
+        incorrectMessage.style.display = "block";
+    }
+
+    // Disable all buttons after selection
+    Array.from(answerButtons.children).forEach(btn => {
+        btn.disabled = true;
+        if (btn.innerText === shuffledQuestions[currentQuestionIndex].answers.find(a => a.correct).text) {
+            btn.classList.add("correct");
+        }
+    });
+
+    // Wait 1.5 seconds before moving to next question
+    setTimeout(() => {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < shuffledQuestions.length) {
+            showQuestion(shuffledQuestions[currentQuestionIndex]);
+        } else {
+            endQuiz();
+        }
+    }, 500);
+}
+
+function endQuiz() {
+    questionContainer.classList.add("hide");
+    finalScoreContainer.classList.remove("hide");
+    finalScoreText.innerText = score;
+}
+
+restartButton.addEventListener("click", () => {
+    finalScoreContainer.classList.add("hide");
+    startButton.classList.remove("hide");
+});
